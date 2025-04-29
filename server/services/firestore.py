@@ -8,8 +8,9 @@ app = firebase_admin.initialize_app(cred)
 
 class FirestoreClient:
     def __init__(self):
-        self.db = firestore.client()
+        db = firestore.client()
 
-        self.Items = self.db.collection("items")
+        self.Items = db.collection("items")
 
-fs_client = FirestoreClient()
+
+client = FirestoreClient()

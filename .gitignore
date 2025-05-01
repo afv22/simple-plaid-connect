@@ -2,3 +2,4 @@
 venv
 server/firebase-cert.json
 __pycache__
+.DS_Store

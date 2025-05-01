@@ -2,21 +2,21 @@ import os
 from dotenv import load_dotenv
 
 import plaid
+from plaid import Environment
 from plaid.api import plaid_api
 
 load_dotenv()
 
 PLAID_CLIENT_ID = os.getenv("PLAID_CLIENT_ID")
-PLAID_SECRET = os.getenv("PLAID_SECRET")
-PLAID_ENV = os.getenv("PLAID_ENV")
-
-host = plaid.Environment.Sandbox
-
-if PLAID_ENV == "sandbox":
-    host = plaid.Environment.Sandbox
+PLAID_ENV = os.getenv("PLAID_ENV", "sandbox")
 
 if PLAID_ENV == "production":
-    host = plaid.Environment.Production
+    host = Environment.Production
+    PLAID_SECRET = os.getenv("PLAID_SECRET_PRODUCTION")
+else:
+    host = Environment.Sandbox
+    PLAID_SECRET = os.getenv("PLAID_SECRET_SANDBOX")
+
 
 def init_client():
     configuration = plaid.Configuration(
@@ -30,5 +30,6 @@ def init_client():
 
     api_client = plaid.ApiClient(configuration)
     return plaid_api.PlaidApi(api_client)
+
 
 client = init_client()

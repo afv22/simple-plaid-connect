@@ -15,8 +15,10 @@ from plaid.model.link_token_create_request_user import LinkTokenCreateRequestUse
 from plaid.model.accounts_get_request import AccountsGetRequest
 from plaid.model.products import Products
 
-from server.services.firestore import client as fs_client
-from server.services.plaid import client as plaid_client, host
+from services.firestore import client as fs_client
+from services.plaid import client as plaid_client, host
+
+from google.cloud.firestore_v1.base_query import FieldFilter
 
 load_dotenv()
 
@@ -61,7 +63,9 @@ def exchange_public_token():
 @bp.get("/accounts")
 def get_accounts():
     try:
-        connections = fs_client.Items.where("user_id", "==", user_id).get()
+        connections = fs_client.Items.where(
+            filter=FieldFilter("user_id", "==", user_id)
+        ).get()
         accounts = []
         for connection in connections:
             access_token = connection.get("access_token")

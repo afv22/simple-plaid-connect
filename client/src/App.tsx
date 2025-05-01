@@ -1,75 +1,73 @@
 import { useState, useEffect, useCallback } from "react";
 import { usePlaidLink } from "react-plaid-link";
+import { Box, Button, ButtonGroup } from "@mui/material";
+import AccountsTable from "./components/AccountsTable";
+import APIClient from "./api/APIClient";
+
+const LINK_TOKEN_KEY = "link_token";
 
 function App() {
   const [token, setToken] = useState<string | null>(null);
-  const [accounts, setAccounts] = useState([]);
+  const [accounts, setAccounts] = useState<Array<any> | null>(null);
 
   const onSuccess = useCallback(async (publicToken: string) => {
-    await fetch("http://localhost:5000/api/exchange_public_token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+    await APIClient.post("/exchange_public_token", {
       body: JSON.stringify({ public_token: publicToken }),
     });
     getAccounts();
   }, []);
 
-  // Creates a Link token
   const createLinkToken = useCallback(async () => {
-    const response = await fetch(
-      "http://localhost:5000/api/create_link_token",
-      {
-        method: "GET",
+    const maybeLinkToken = localStorage.getItem(LINK_TOKEN_KEY);
+    if (maybeLinkToken) {
+      const linkToken = JSON.parse(maybeLinkToken);
+      const now = new Date().getTime().toString();
+      if (linkToken.expiration > now) {
+        setToken(linkToken.value);
+        return;
       }
+    }
+
+    const response = await APIClient.get("/create_link_token");
+    setToken(response.link_token);
+    localStorage.setItem(
+      LINK_TOKEN_KEY,
+      JSON.stringify({
+        value: response.link_token,
+        expiration: response.expiration,
+      })
     );
-    const data = await response.json();
-    setToken(data.link_token);
-    localStorage.setItem("link_token", data.link_token);
   }, [setToken]);
 
   const getAccounts = useCallback(async () => {
-    const response = await fetch("http://localhost:5000/api/accounts", {
-      method: "GET",
-    });
-    const data = await response.json();
-    setAccounts(data);
+    const response = await APIClient.get("/accounts");
+    setAccounts(response);
   }, [setAccounts]);
 
-  let isOauth = false;
-
-  const config = {
-    token,
-    onSuccess,
-  };
-
-  const { open, ready } = usePlaidLink(config);
+  const { open, ready } = usePlaidLink({ token, onSuccess });
 
   useEffect(() => {
-    if (token == null) {
-      createLinkToken();
-    }
-    if (isOauth && ready) {
-      open();
-    }
-  }, [token, isOauth, ready, open]);
+    createLinkToken();
+  }, []);
 
   return (
-    <div>
-      <button onClick={() => open()} disabled={!ready}>
-        <strong>Link account</strong>
-      </button>
-      <button onClick={() => getAccounts()}>Get Accounts</button>
-      {accounts.map((account) => {
-        return (
-          <div key={account["name"]}>
-            <p>Name: {account["name"]}</p>
-            <p>Balance: {account["balance"]}</p>
-          </div>
-        );
-      })}
-    </div>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        paddingTop: "100px",
+        width: "100%",
+      }}
+    >
+      <ButtonGroup variant="contained">
+        <Button onClick={() => open()} disabled={!ready}>
+          Link account
+        </Button>
+        <Button onClick={() => getAccounts()}>Get Accounts</Button>
+      </ButtonGroup>
+      {accounts && <AccountsTable accounts={accounts} />}
+    </Box>
   );
 }
 

@@ -39,6 +39,11 @@ function App() {
     );
   }, [setToken]);
 
+  const refreshLinkToken = async () => {
+    localStorage.removeItem(LINK_TOKEN_KEY);
+    await createLinkToken();
+  };
+
   const getAccounts = useCallback(async () => {
     const response = await APIClient.get("/accounts");
     setAccounts(response);
@@ -64,7 +69,8 @@ function App() {
         <Button onClick={() => open()} disabled={!ready}>
           Link account
         </Button>
-        <Button onClick={() => getAccounts()}>Get Accounts</Button>
+        <Button onClick={refreshLinkToken}>Refresh Link</Button>
+        <Button onClick={getAccounts}>Get Accounts</Button>
       </ButtonGroup>
       {accounts && <AccountsTable accounts={accounts} />}
     </Box>

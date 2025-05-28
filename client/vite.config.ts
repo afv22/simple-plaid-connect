@@ -6,5 +6,6 @@ export default defineConfig({
   server: {
     port: 8080,
     strictPort: true,
+    host: '0.0.0.0', // Listen on all interfaces for Docker
   },
 });

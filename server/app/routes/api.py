@@ -15,12 +15,12 @@ from plaid.model.link_token_create_request_user import LinkTokenCreateRequestUse
 from plaid.model.accounts_get_request import AccountsGetRequest
 from plaid.model.products import Products
 
-from services.firestore import client as fs_client
-from services.plaid import client as plaid_client, host
+from app.services.firestore import client as fs_client
+from app.services.plaid import client as plaid_client, host
 
 from google.cloud.firestore_v1.base_query import FieldFilter
 
-load_dotenv()
+load_dotenv(override=True)
 
 bp = Blueprint("api", __name__, url_prefix="/api")
 

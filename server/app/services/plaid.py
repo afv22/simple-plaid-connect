@@ -5,7 +5,7 @@ import plaid
 from plaid import Environment
 from plaid.api import plaid_api
 
-load_dotenv()
+load_dotenv(override=True)
 
 PLAID_CLIENT_ID = os.getenv("PLAID_CLIENT_ID")
 PLAID_ENV = os.getenv("PLAID_ENV", "sandbox")

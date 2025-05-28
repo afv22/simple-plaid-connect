@@ -1,0 +1,23 @@
+services:
+  client:
+    image: plaid-connect-client:dev
+    container_name: plaid-connect-client
+    build:
+      context: client
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    volumes:
+      - .
+  server:
+    image: plaid-connect-server:dev
+    container_name: plaid-connect-server
+    build:
+      context: server
+      dockerfile: Dockerfile
+    ports:
+      - 5001:5001
+    volumes:
+      - ./server/app:/server/app

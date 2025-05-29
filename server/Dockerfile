@@ -2,12 +2,10 @@ FROM python:alpine
 
 WORKDIR /server
 
-COPY ./requirements.txt .
+COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
-
 EXPOSE 5001
 
-CMD ["python", "server.py"]
+CMD ["python", "-u", "server.py"]

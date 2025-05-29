@@ -1,6 +1,5 @@
 import os
 import json
-import time
 from dotenv import load_dotenv
 
 from flask import Blueprint, request, jsonify
@@ -33,12 +32,13 @@ user_id = 1 if host == plaid.Environment.Sandbox else 2
 @bp.get("/create_link_token")
 def create_link_token():
     try:
+        print("fuck", PLAID_PRODUCTS, PLAID_COUNTRY_CODES)
         link_request = LinkTokenCreateRequest(
             products=list(map(lambda x: Products(x), PLAID_PRODUCTS)),
             client_name="Plaid Connect",
             country_codes=list(map(lambda x: CountryCode(x), PLAID_COUNTRY_CODES)),
             language="en",
-            user=LinkTokenCreateRequestUser(client_user_id=str(time.time())),
+            user=LinkTokenCreateRequestUser(client_user_id=str(user_id)),
         )
         link_response = plaid_client.link_token_create(link_request)
         return jsonify(link_response.to_dict())

@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:5001/api";
+const API_BASE_URL = "http://0.0.0.0:5001/api";
 
 type HttpMethod =
   | "GET"
@@ -18,6 +18,7 @@ class APIClient {
 
     return fetch(url, { ...options, method: method }).then((response) => {
       if (!response.ok) {
+        console.log(response);
         throw new Error(`API request failed with status ${response.status}`);
       }
       return response.json();

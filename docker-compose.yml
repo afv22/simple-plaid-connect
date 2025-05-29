@@ -8,6 +8,8 @@ services:
     ports:
       - 8080:8080
     restart: unless-stopped
+    volumes:
+      - ./client/app:/client/app
   server:
     image: plaid-connect-server:dev
     container_name: plaid-connect-server
@@ -19,3 +21,4 @@ services:
     restart: unless-stopped
     volumes:
       - ./server/app:/server/app
+    env_file: ".env"

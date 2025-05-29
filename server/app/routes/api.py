@@ -16,6 +16,7 @@ from plaid.model.products import Products
 
 from app.services.firestore import client as fs_client
 from app.services.plaid import client as plaid_client, host
+from app.services.auth import token_required
 
 from google.cloud.firestore_v1.base_query import FieldFilter
 
@@ -30,9 +31,9 @@ user_id = 1 if host == plaid.Environment.Sandbox else 2
 
 
 @bp.get("/create_link_token")
+@token_required
 def create_link_token():
     try:
-        print("fuck", PLAID_PRODUCTS, PLAID_COUNTRY_CODES)
         link_request = LinkTokenCreateRequest(
             products=list(map(lambda x: Products(x), PLAID_PRODUCTS)),
             client_name="Plaid Connect",
@@ -47,6 +48,7 @@ def create_link_token():
 
 
 @bp.post("/exchange_public_token")
+@token_required
 def exchange_public_token():
     public_token = request.json["public_token"]
     try:
@@ -61,6 +63,7 @@ def exchange_public_token():
 
 
 @bp.get("/accounts")
+@token_required
 def get_accounts():
     try:
         connections = fs_client.Items.where(

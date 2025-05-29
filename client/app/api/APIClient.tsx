@@ -1,3 +1,5 @@
+import { getCurrentUserToken } from '../services/firebase';
+
 const API_BASE_URL = "http://0.0.0.0:5001/api";
 
 type HttpMethod =
@@ -15,8 +17,24 @@ class APIClient {
       ? endpoint
       : `/${endpoint}`;
     const url = `${API_BASE_URL}${normalizedEndpoint}`;
-
-    return fetch(url, { ...options, method: method }).then((response) => {
+    
+    // Get the current user's token for authentication
+    const token = await getCurrentUserToken();
+    const headers = {
+      ...options.headers,
+      'Content-Type': 'application/json',
+    };
+    
+    // Add the Authorization header if we have a token
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    return fetch(url, { 
+      ...options, 
+      method: method,
+      headers: headers
+    }).then((response) => {
       if (!response.ok) {
         console.log(response);
         throw new Error(`API request failed with status ${response.status}`);

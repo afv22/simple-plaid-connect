@@ -32,7 +32,6 @@ user_id = 1 if host == plaid.Environment.Sandbox else 2
 @bp.get("/create_link_token")
 def create_link_token():
     try:
-        print("fuck", PLAID_PRODUCTS, PLAID_COUNTRY_CODES)
         link_request = LinkTokenCreateRequest(
             products=list(map(lambda x: Products(x), PLAID_PRODUCTS)),
             client_name="Plaid Connect",

@@ -4,6 +4,7 @@ import { Box, Button, ButtonGroup } from "@mui/material";
 import AccountsTable from "./components/AccountsTable";
 import APIClient from "./api/APIClient";
 import { logout } from "./services/firebase";
+import TargetAllocationChart from "./components/TargetAllocationChart";
 
 const LINK_TOKEN_KEY = "link_token";
 
@@ -60,11 +61,6 @@ function App() {
     console.log(response.data);
   }, []);
 
-  const getTargetAllocation = useCallback(async () => {
-    const response = await APIClient.get("/portfolio/target_allocation");
-    console.log(response.data);
-  }, []);
-
   const { open, ready } = usePlaidLink({ token, onSuccess });
 
   useEffect(() => {
@@ -89,10 +85,10 @@ function App() {
         <Button onClick={getAccounts}>Get Accounts</Button>
         <Button onClick={getHoldings}>Get Holdings</Button>
         <Button onClick={getRebalanceAmounts}>Get Rebalance Amounts</Button>
-        <Button onClick={getTargetAllocation}>Get Target</Button>
         <Button onClick={logout}>Logout</Button>
       </ButtonGroup>
       {accounts && <AccountsTable accounts={accounts} />}
+      <TargetAllocationChart />
     </Box>
   );
 }

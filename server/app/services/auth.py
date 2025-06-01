@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import request, jsonify
+from flask import request, jsonify, session
 from firebase_admin import auth
 from app.services.firebase import initialize_firebase
 
@@ -9,7 +9,6 @@ initialize_firebase()
 def verify_token(token):
     """Verify the Firebase ID token"""
     try:
-        # Verify the ID token
         decoded_token = auth.verify_id_token(token)
         return decoded_token
     except Exception as e:
@@ -37,8 +36,8 @@ def token_required(f):
         if not decoded_token:
             return jsonify({"error": "Invalid authentication token"}), 401
 
-        # Add the user info to the request
-        request.user = decoded_token
+        # Add the user info to the Flask session
+        session["uid"] = decoded_token["uid"]
 
         return f(*args, **kwargs)
 

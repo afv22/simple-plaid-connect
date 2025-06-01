@@ -9,19 +9,8 @@ import {
   getIdToken,
 } from "firebase/auth";
 
-// Your web app's Firebase configuration
-// Replace with your actual Firebase config when deploying
-// const firebaseConfig = {
-//   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-//   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-//   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-//   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-//   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-//   appId: import.meta.env.VITE_FIREBASE_APP_ID
-// };
-
 const firebaseConfig = {
-  apiKey: "AIzaSyBAy9TophFISJOCRfSxp8gt9MW75_lA41M",
+  apiKey: "AIzaSyCbDiIMa19l-XeH8kEO3MN3jXGCcuXii3w",
   authDomain: "plaid-generic.firebaseapp.com",
   projectId: "plaid-generic",
   storageBucket: "plaid-generic.firebasestorage.app",

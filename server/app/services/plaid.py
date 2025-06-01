@@ -5,23 +5,23 @@ from plaid.api import plaid_api
 
 _client = None
 
+
 def get_plaid_client():
     global _client
     if _client is None:
         _client = _init_client()
     return _client
 
+
 def _init_client():
     PLAID_CLIENT_ID = os.getenv("PLAID_CLIENT_ID")
-    PLAID_ENV = os.getenv("PLAID_ENV", "sandbox")
-    
-    if PLAID_ENV == "production":
-        host = Environment.Production
-        PLAID_SECRET = os.getenv("PLAID_SECRET_PRODUCTION")
-    else:
+    PLAID_SECRET = os.getenv("PLAID_SECRET")
+
+    if os.getenv("ENV") == "dev":
         host = Environment.Sandbox
-        PLAID_SECRET = os.getenv("PLAID_SECRET_SANDBOX")
-    
+    else:
+        host = Environment.Production
+
     configuration = plaid.Configuration(
         host=host,
         api_key={

@@ -64,9 +64,8 @@ def exchange_public_token():
 @token_required
 def get_accounts():
     try:
-        connections = fs_client.Items.where(
-            filter=FieldFilter("user_id", "==", get_session()["uid"])
-        ).get()
+        is_user_filter = FieldFilter("user_id", "==", get_session()["uid"])
+        connections = fs_client.Items.where(filter=is_user_filter).get()
         accounts = []
         for connection in connections:
             access_token = connection.get("access_token")

@@ -3,6 +3,7 @@ import { usePlaidLink } from "react-plaid-link";
 import { Box, Button, ButtonGroup } from "@mui/material";
 import AccountsTable from "./components/AccountsTable";
 import APIClient from "./api/APIClient";
+import { logout } from "./services/firebase";
 
 const LINK_TOKEN_KEY = "link_token";
 
@@ -71,6 +72,7 @@ function App() {
         </Button>
         <Button onClick={refreshLinkToken}>Refresh Link</Button>
         <Button onClick={getAccounts}>Get Accounts</Button>
+        <Button onClick={logout}>Logout</Button>
       </ButtonGroup>
       {accounts && <AccountsTable accounts={accounts} />}
     </Box>

@@ -1,9 +1,7 @@
-import firebase_admin
-from firebase_admin import credentials
 from firebase_admin import firestore
+from app.services.firebase import initialize_firebase
 
-cred = credentials.Certificate("./firebase-cert.json")
-firebase_admin.initialize_app(cred)
+initialize_firebase()
 
 
 class FirestoreClient:

@@ -16,7 +16,7 @@ def verify_token(token):
         return None
 
 
-def token_required(f):
+def require_token(f):
     """Decorator to require Firebase token for API endpoints"""
 
     @wraps(f)

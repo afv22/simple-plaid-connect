@@ -5,3 +5,5 @@ protobuf==6.31.0
 python-dotenv==1.1.0
 plaid-python==32.0.0
 waitress==3.0.2
+google-cloud-secret-manager==2.23.3
+pandas==2.2.3

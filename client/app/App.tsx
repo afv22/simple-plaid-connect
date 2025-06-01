@@ -12,7 +12,7 @@ function App() {
   const [accounts, setAccounts] = useState<Array<any> | null>(null);
 
   const onSuccess = useCallback(async (publicToken: string) => {
-    await APIClient.post("/exchange_public_token", {
+    await APIClient.post("/link/exchange_public_token", {
       body: JSON.stringify({ public_token: publicToken }),
     });
     getAccounts();
@@ -29,7 +29,7 @@ function App() {
       }
     }
 
-    const response = await APIClient.get("/create_link_token");
+    const response = await APIClient.get("/link/create_link_token");
     setToken(response.link_token);
     localStorage.setItem(
       LINK_TOKEN_KEY,
@@ -46,9 +46,24 @@ function App() {
   };
 
   const getAccounts = useCallback(async () => {
-    const response = await APIClient.get("/accounts");
-    setAccounts(response);
-  }, [setAccounts]);
+    const response = await APIClient.get("/portfolio/accounts");
+    setAccounts(response.data);
+  }, []);
+
+  const getHoldings = useCallback(async () => {
+    const response = await APIClient.get("/portfolio/holdings");
+    console.log(response.data);
+  }, []);
+
+  const getRebalanceAmounts = useCallback(async () => {
+    const response = await APIClient.get("/portfolio/rebalance_amounts");
+    console.log(response.data);
+  }, []);
+
+  const getTargetAllocation = useCallback(async () => {
+    const response = await APIClient.get("/portfolio/target_allocation");
+    console.log(response.data);
+  }, []);
 
   const { open, ready } = usePlaidLink({ token, onSuccess });
 
@@ -72,6 +87,9 @@ function App() {
         </Button>
         <Button onClick={refreshLinkToken}>Refresh Link</Button>
         <Button onClick={getAccounts}>Get Accounts</Button>
+        <Button onClick={getHoldings}>Get Holdings</Button>
+        <Button onClick={getRebalanceAmounts}>Get Rebalance Amounts</Button>
+        <Button onClick={getTargetAllocation}>Get Target</Button>
         <Button onClick={logout}>Logout</Button>
       </ButtonGroup>
       {accounts && <AccountsTable accounts={accounts} />}

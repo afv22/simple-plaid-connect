@@ -10,21 +10,18 @@ from plaid.model.item_public_token_exchange_request import (
 )
 from plaid.model.link_token_create_request import LinkTokenCreateRequest
 from plaid.model.link_token_create_request_user import LinkTokenCreateRequestUser
-from plaid.model.accounts_get_request import AccountsGetRequest
 from plaid.model.products import Products
 
 from app.session import get_session
 from app.services.firestore import client as fs_client
 from app.services.plaid import get_plaid_client
-from app.services.auth import token_required
+from app.services.auth import require_token
 
-from google.cloud.firestore_v1.base_query import FieldFilter
-
-bp = Blueprint("api", __name__, url_prefix="/api")
+bp = Blueprint("plaid-link", __name__)
 
 
 @bp.get("/create_link_token")
-@token_required
+@require_token
 def create_link_token():
     try:
         plaid_products = os.getenv("PLAID_PRODUCTS", "").split(",")
@@ -43,7 +40,7 @@ def create_link_token():
 
 
 @bp.post("/exchange_public_token")
-@token_required
+@require_token
 def exchange_public_token():
     try:
         plaid_client = get_plaid_client()
@@ -56,25 +53,5 @@ def exchange_public_token():
             {"access_token": access_token, "user_id": get_session()["uid"]}, item_id
         )
         return jsonify(exchange_response.to_dict())
-    except plaid.ApiException as e:
-        return json.loads(e.body) if e.body is not None else jsonify({"error": str(e)})
-
-
-@bp.get("/accounts")
-@token_required
-def get_accounts():
-    try:
-        is_user_filter = FieldFilter("user_id", "==", get_session()["uid"])
-        connections = fs_client.Items.where(filter=is_user_filter).get()
-        accounts = []
-        for connection in connections:
-            access_token = connection.get("access_token")
-            accounts_request = AccountsGetRequest(access_token=access_token)
-            accounts_response = get_plaid_client().accounts_get(accounts_request)
-            for account in accounts_response["accounts"]:
-                name = account["name"]
-                balance = account["balances"]["current"]
-                accounts.append({"name": name, "balance": balance})
-        return jsonify(accounts)
     except plaid.ApiException as e:
         return json.loads(e.body) if e.body is not None else jsonify({"error": str(e)})
